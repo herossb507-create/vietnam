@@ -47,6 +47,7 @@ function Life({ openModal }) {
               placeholder="2000000"
               value={salary}
               onChange={(e) => setSalary(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && calcSalary()}
             />
             <span className="calc-unit">₩ / tháng</span>
           </div>

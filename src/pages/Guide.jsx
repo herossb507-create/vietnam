@@ -58,7 +58,7 @@ function Guide({ openModal }) {
       </div>
 
       <div className="steps">
-        {STEPS.map((step, idx) => (
+        {STEPS.map((step) => (
           <div key={step.num} className="step-item">
             <div className="step-num">{step.num}</div>
             <div className="step-content" onClick={() => openModal(modals[step.modalId])}>
