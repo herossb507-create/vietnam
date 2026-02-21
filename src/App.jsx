@@ -9,6 +9,7 @@ import Home from './pages/Home'
 import Guide from './pages/Guide'
 import Life from './pages/Life'
 import Community from './pages/Community'
+import Admin from './pages/Admin'
 import './App.css'
 import { useEffect } from 'react'
 
@@ -36,6 +37,7 @@ function App() {
             <Route path="/guide"     element={<Guide     openModal={setModal} />} />
             <Route path="/life"      element={<Life      openModal={setModal} />} />
             <Route path="/community" element={<Community openModal={setModal} openAuthModal={openAuthModal} />} />
+            <Route path="/admin"     element={<Admin />} />
           </Routes>
         </main>
         <BottomNav />

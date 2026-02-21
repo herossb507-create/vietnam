@@ -36,11 +36,20 @@ export async function fetchGuides() {
  * CREATE TABLE reviews (
  *   id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
  *   name        text NOT NULL,
- *   info        text NOT NULL,     -- 예: '공장 • Gyeonggi-do • 2년'
+ *   info        text NOT NULL,
  *   stars       int NOT NULL CHECK (stars BETWEEN 1 AND 5),
  *   review_text text NOT NULL,
  *   tags        text[] DEFAULT '{}',
+ *   is_approved boolean DEFAULT false,
  *   created_at  timestamptz DEFAULT now()
+ * );
+ *
+ * settings 테이블 스키마:
+ *
+ * CREATE TABLE settings (
+ *   key   text PRIMARY KEY,
+ *   value text NOT NULL,
+ *   label text NOT NULL
  * );
  */
 export async function fetchReviews() {
@@ -65,4 +74,57 @@ export async function saveReview(review) {
 
   if (error) throw error
   return data
+}
+
+// ── Admin: Guides CRUD ──────────────────────────────────────────
+export async function fetchGuidesRaw() {
+  const { data, error } = await supabase
+    .from('guides').select('*').order('step_num')
+  if (error) throw error
+  return data
+}
+
+export async function upsertGuide(guide) {
+  const { data, error } = await supabase
+    .from('guides').upsert([guide]).select().single()
+  if (error) throw error
+  return data
+}
+
+export async function deleteGuide(id) {
+  const { error } = await supabase.from('guides').delete().eq('id', id)
+  if (error) throw error
+}
+
+// ── Admin: Reviews ──────────────────────────────────────────────
+export async function fetchAllReviews() {
+  const { data, error } = await supabase
+    .from('reviews').select('*').order('created_at', { ascending: false })
+  if (error) throw error
+  return data
+}
+
+export async function updateReviewApproval(id, isApproved) {
+  const { error } = await supabase
+    .from('reviews').update({ is_approved: isApproved }).eq('id', id)
+  if (error) throw error
+}
+
+export async function deleteReview(id) {
+  const { error } = await supabase.from('reviews').delete().eq('id', id)
+  if (error) throw error
+}
+
+// ── Admin: Settings ─────────────────────────────────────────────
+export async function fetchSettings() {
+  const { data, error } = await supabase
+    .from('settings').select('*').order('key')
+  if (error) throw error
+  return data
+}
+
+export async function upsertSetting(key, value, label) {
+  const { error } = await supabase
+    .from('settings').upsert([{ key, value, label }])
+  if (error) throw error
 }
