@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { fetchReviews, saveReview } from '../lib/api'
+import { useAuth } from '../context/AuthContext'
 
 // Supabase reviews 테이블이 없거나 오류 시 사용하는 fallback 데이터
 const REVIEWS_FALLBACK = [
@@ -136,8 +137,9 @@ function WriteReviewModal({ onClose, onSaved }) {
 }
 
 // ── 메인 Community 페이지 ─────────────────────────────────────
-function Community({ openModal }) {
+function Community({ openModal, openAuthModal }) {
   const navigate = useNavigate()
+  const { user } = useAuth()
   const [reviews,    setReviews]    = useState([])
   const [loading,    setLoading]    = useState(true)
   const [refreshKey, setRefreshKey] = useState(0)
@@ -212,9 +214,20 @@ function Community({ openModal }) {
         )}
 
         <div style={{ textAlign: 'center', padding: '8px 0 4px' }}>
-          <button className="write-btn" onClick={() => setShowForm(true)}>
-            ✏️ Chia sẻ kinh nghiệm của bạn
-          </button>
+          {user ? (
+            <button className="write-btn" onClick={() => setShowForm(true)}>
+              ✏️ Chia sẻ kinh nghiệm của bạn
+            </button>
+          ) : (
+            <div>
+              <button className="write-btn" onClick={openAuthModal}>
+                ✏️ Chia sẻ kinh nghiệm của bạn
+              </button>
+              <p style={{ fontSize: 12, color: '#aaa', marginTop: 6 }}>
+                Đăng nhập để viết đánh giá
+              </p>
+            </div>
+          )}
         </div>
       </div>
 

@@ -511,6 +511,176 @@ header {
 /* ── SPACER ── */
 .spacer { height: 80px; }
 
+/* ── HEADER AUTH ── */
+.header-right { display: flex; align-items: center; gap: 8px; }
+
+/* 비로그인 "Đăng nhập" 버튼 */
+.login-header-btn {
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.55);
+  color: #fff;
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-family: 'Baloo 2', cursive;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.login-header-btn:hover { background: rgba(255,255,255,0.32); }
+
+/* 로그인 상태 아바타 버튼 */
+.user-menu-wrap { position: relative; }
+.avatar-btn {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  border: 2px solid rgba(255,255,255,0.6);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 800;
+  font-family: 'Baloo 2', cursive;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+}
+.avatar-btn:hover { background: rgba(255,255,255,0.38); }
+
+/* 드롭다운 메뉴 */
+.user-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 200px;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  overflow: hidden;
+  z-index: 200;
+}
+.user-dropdown-email {
+  padding: 12px 16px 8px;
+  font-size: 12px;
+  color: #888;
+  border-bottom: 1px solid #f0f0f0;
+  word-break: break-all;
+}
+.user-dropdown-item {
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--dark);
+  cursor: pointer;
+  font-family: 'Noto Sans Vietnamese', sans-serif;
+  transition: background 0.15s;
+}
+.user-dropdown-item:hover { background: #fef5f5; color: var(--red); }
+
+/* ── AUTH MODAL ── */
+.auth-sheet { padding-bottom: 32px; }
+.auth-logo {
+  font-size: 36px;
+  text-align: center;
+  margin: 4px 0 6px;
+}
+.auth-headline {
+  font-family: 'Baloo 2', cursive;
+  font-weight: 800;
+  font-size: 20px;
+  color: var(--dark);
+  text-align: center;
+  margin-bottom: 2px;
+}
+.auth-sub {
+  font-size: 13px;
+  color: #888;
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+/* 탭 스위처 */
+.auth-tabs {
+  display: flex;
+  background: #f4f4f6;
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 20px;
+}
+.auth-tab {
+  flex: 1;
+  padding: 9px 0;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: 'Baloo 2', cursive;
+  color: #888;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.auth-tab.active {
+  background: #fff;
+  color: var(--dark);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+}
+
+/* 오류 */
+.auth-error {
+  font-size: 13px;
+  color: var(--red);
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: var(--light-red);
+  border-radius: 10px;
+}
+
+/* 구분선 */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+  color: #ccc;
+  font-size: 13px;
+}
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #eee;
+}
+.auth-divider span { color: #bbb; }
+
+/* 구글 버튼 */
+.google-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #fff;
+  border: 2px solid #e0e0e0;
+  border-radius: 14px;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: 'Baloo 2', cursive;
+  color: var(--dark);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.google-btn:hover:not(:disabled) {
+  border-color: #aaa;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+}
+.google-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
 /* ── LOADING SPINNER ── */
 @keyframes spin { to { transform: rotate(360deg); } }
 .spinner {
