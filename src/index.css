@@ -510,3 +510,87 @@ header {
 
 /* ── SPACER ── */
 .spacer { height: 80px; }
+
+/* ── LOADING SPINNER ── */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner {
+  width: 36px; height: 36px;
+  border: 3px solid #f0f0f0;
+  border-top-color: var(--red);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto;
+}
+.loading-wrap {
+  text-align: center;
+  padding: 48px 24px;
+}
+.loading-wrap p { color: #888; margin-top: 12px; font-size: 14px; }
+
+/* ── ERROR STATE ── */
+.error-wrap {
+  text-align: center;
+  padding: 48px 24px;
+  color: #888;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ── WRITE REVIEW FORM ── */
+.form-group { margin-bottom: 16px; }
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 6px;
+}
+.form-input, .form-textarea {
+  width: 100%;
+  border: 2px solid #eee;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-family: 'Noto Sans Vietnamese', sans-serif;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+.form-input:focus, .form-textarea:focus { border-color: var(--red); }
+.form-textarea { resize: vertical; min-height: 90px; }
+.star-row { display: flex; gap: 8px; }
+.star-btn {
+  font-size: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  opacity: 0.3;
+  transition: opacity 0.15s, transform 0.15s;
+}
+.star-btn.active { opacity: 1; }
+.star-btn:hover { transform: scale(1.2); }
+.form-hint { font-size: 11px; color: #aaa; margin-top: 4px; }
+.submit-btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--red), #a00020);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Baloo 2', cursive;
+  transition: all 0.2s;
+  box-shadow: 0 4px 16px rgba(200,16,46,0.3);
+}
+.submit-btn:hover:not(:disabled) { transform: translateY(-2px); }
+.submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.success-box {
+  text-align: center;
+  padding: 20px 0 8px;
+}
+.success-box .s-icon { font-size: 48px; margin-bottom: 12px; }
+.success-box .s-title { font-family: 'Baloo 2', cursive; font-weight: 800; font-size: 20px; color: var(--dark); margin-bottom: 8px; }
+.success-box .s-desc { font-size: 14px; color: #666; line-height: 1.6; }
