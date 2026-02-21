@@ -7,8 +7,8 @@ import {
 } from '../lib/api'
 
 // ── 관리자 설정 ──────────────────────────────────────────────────
-const ADMIN_PASSWORD = 'koviet2024'         // ← 원하는 비밀번호로 변경
-const ADMIN_EMAIL    = 'admin@example.com'  // ← 관리자 이메일로 변경
+const ADMIN_PASSWORD = 'Tnwls4627@0627'         // ← 원하는 비밀번호로 변경
+const ADMIN_EMAIL    = 'herossb507@gmail.com'  // ← 관리자 이메일로 변경
 
 // ── 가이드 관리 탭 ──────────────────────────────────────────────
 function GuidesPanel() {
