@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { signOut } from '../lib/auth'
 
-function Header({ onLoginClick }) {
+function Header({ onLoginClick, onSearchClick }) {
   const { user } = useAuth()
   const [showMenu, setShowMenu] = useState(false)
   const menuRef = useRef(null)
@@ -28,6 +28,12 @@ function Header({ onLoginClick }) {
         <div className="logo">KoViet <span>Guide</span></div>
 
         <div className="header-right">
+          {/* 검색 아이콘 버튼 */}
+          <button className="search-icon-btn" onClick={onSearchClick} aria-label="Search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" width="18" height="18">
+              <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+          </button>
           {user ? (
             /* ── 로그인 상태: 아바타 + 드롭다운 ── */
             <div className="user-menu-wrap" ref={menuRef}>

@@ -5,6 +5,7 @@ import Header from './components/Header'
 import BottomNav from './components/BottomNav'
 import Modal from './components/Modal'
 import AuthModal from './components/AuthModal'
+import SearchModal from './components/SearchModal'
 import Home from './pages/Home'
 import Guide from './pages/Guide'
 import Life from './pages/Life'
@@ -21,16 +22,18 @@ function ScrollToTop() {
 }
 
 function App() {
-  const [modal,         setModal]         = useState(null)
-  const [showAuthModal, setShowAuthModal] = useState(false)
+  const [modal,          setModal]          = useState(null)
+  const [showAuthModal,  setShowAuthModal]  = useState(false)
+  const [showSearch,     setShowSearch]     = useState(false)
 
   const openAuthModal = () => setShowAuthModal(true)
+  const openSearch    = () => setShowSearch(true)
 
   return (
     <AuthProvider>
       <BrowserRouter>
         <ScrollToTop />
-        <Header onLoginClick={openAuthModal} />
+        <Header onLoginClick={openAuthModal} onSearchClick={openSearch} />
         <main style={{ paddingBottom: '70px' }}>
           <Routes>
             <Route path="/"          element={<Home      openModal={setModal} />} />
@@ -43,6 +46,7 @@ function App() {
         <BottomNav />
         <Modal    data={modal} onClose={() => setModal(null)} />
         {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
+        {showSearch    && <SearchModal onClose={() => setShowSearch(false)} openModal={setModal} />}
       </BrowserRouter>
     </AuthProvider>
   )

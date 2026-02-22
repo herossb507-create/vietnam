@@ -128,3 +128,58 @@ export async function upsertSetting(key, value, label) {
     .from('settings').upsert([{ key, value, label }])
   if (error) throw error
 }
+
+// ── Search ───────────────────────────────────────────────────────
+// FTS(supabase/search-indexes.sql) 인덱스가 없으면 자동으로 ilike 방식으로 fallback
+
+export async function searchGuides(query) {
+  const q = query.trim()
+  if (!q) return []
+
+  // 1) FTS: search-indexes.sql 실행 후 사용 가능
+  const { data: ftsData, error: ftsError } = await supabase
+    .from('guides')
+    .select('id, step_num, modal_id, title, description, badge')
+    .textSearch('fts', q, { type: 'websearch', config: 'simple' })
+    .order('step_num')
+    .limit(8)
+
+  if (!ftsError && ftsData?.length > 0) return ftsData
+
+  // 2) fallback: ilike (FTS 인덱스 없어도 동작)
+  const { data, error } = await supabase
+    .from('guides')
+    .select('id, step_num, modal_id, title, description, badge')
+    .or(`title.ilike.%${q}%,description.ilike.%${q}%,badge.ilike.%${q}%`)
+    .order('step_num')
+    .limit(8)
+
+  if (error) return []
+  return data ?? []
+}
+
+export async function searchReviews(query) {
+  const q = query.trim()
+  if (!q) return []
+
+  // 1) FTS
+  const { data: ftsData, error: ftsError } = await supabase
+    .from('reviews')
+    .select('id, name, info, stars, review_text, tags')
+    .textSearch('fts', q, { type: 'websearch', config: 'simple' })
+    .order('created_at', { ascending: false })
+    .limit(8)
+
+  if (!ftsError && ftsData?.length > 0) return ftsData
+
+  // 2) fallback: ilike
+  const { data, error } = await supabase
+    .from('reviews')
+    .select('id, name, info, stars, review_text, tags')
+    .or(`name.ilike.%${q}%,review_text.ilike.%${q}%,info.ilike.%${q}%`)
+    .order('created_at', { ascending: false })
+    .limit(8)
+
+  if (error) return []
+  return data ?? []
+}

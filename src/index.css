@@ -790,6 +790,138 @@ header {
 }
 .google-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
+/* ── SEARCH ── */
+
+/* 헤더 검색 아이콘 버튼 */
+.search-icon-btn {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.18);
+  border: 1.5px solid rgba(255,255,255,0.45);
+  color: #fff;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.search-icon-btn:hover { background: rgba(255,255,255,0.30); }
+.search-icon-btn svg { display: block; }
+
+/* 검색 모달 시트 (높이 더 크게) */
+.search-sheet {
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  padding-top: 14px;
+}
+
+/* 검색 입력창 */
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f4f4f6;
+  border-radius: 14px;
+  padding: 0 14px;
+  margin: 0 4px 16px;
+  height: 48px;
+  flex-shrink: 0;
+}
+.search-bar-icon { color: #aaa; flex-shrink: 0; }
+.search-bar-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  font-family: 'Noto Sans Vietnamese', sans-serif;
+  outline: none;
+  color: var(--dark);
+}
+.search-bar-input::placeholder { color: #bbb; }
+.search-bar-clear {
+  background: none; border: none;
+  color: #aaa; font-size: 14px;
+  cursor: pointer; padding: 4px; line-height: 1;
+}
+
+/* 스크롤 영역 */
+.search-body { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+
+/* 검색 결과 */
+.search-results { padding-bottom: 16px; }
+.search-section { margin-bottom: 8px; }
+.search-section-title {
+  font-size: 12px; font-weight: 800; color: #888;
+  text-transform: uppercase; letter-spacing: 0.4px;
+  padding: 4px 4px 8px;
+  display: flex; align-items: center; gap: 6px;
+}
+.search-count {
+  background: #f0f0f2; color: #888;
+  border-radius: 8px; padding: 1px 7px;
+  font-size: 11px; font-weight: 700;
+}
+
+/* 개별 결과 아이템 */
+.search-item {
+  display: flex; align-items: center; gap: 12px;
+  width: 100%; text-align: left;
+  padding: 10px 8px; border-radius: 12px;
+  border: none; background: transparent;
+  cursor: pointer; transition: background 0.15s;
+  font-family: 'Noto Sans Vietnamese', sans-serif;
+}
+.search-item:hover { background: #f6f6f8; }
+
+.search-item-num {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: linear-gradient(135deg, var(--red), #a00020);
+  color: #fff; font-family: 'Baloo 2', cursive;
+  font-weight: 800; font-size: 14px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.search-item-avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: linear-gradient(135deg, #4a8f3f, #2d5a27);
+  color: #fff; font-weight: 800; font-size: 13px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.search-item-body { flex: 1; min-width: 0; }
+.search-item-title {
+  font-size: 14px; font-weight: 700; color: var(--dark);
+  margin-bottom: 2px;
+  display: flex; align-items: center; gap: 6px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.search-item-sub {
+  font-size: 12px; color: #888; line-height: 1.4;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.search-stars { color: var(--gold); font-size: 11px; }
+.search-arrow { color: #ccc; font-size: 14px; flex-shrink: 0; }
+
+/* 결과 없음 */
+.search-empty { text-align: center; padding: 40px 20px; }
+.search-empty-icon { font-size: 44px; margin-bottom: 12px; }
+.search-empty-title {
+  font-family: 'Baloo 2', cursive; font-weight: 700;
+  font-size: 17px; color: var(--dark); margin-bottom: 6px;
+}
+.search-empty-sub { font-size: 13px; color: #aaa; }
+
+/* 초기 힌트 칩 */
+.search-hint { padding: 8px 4px; }
+.search-hint-title { font-size: 13px; color: #888; margin-bottom: 12px; font-weight: 600; }
+.search-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.search-chip {
+  padding: 6px 14px; border-radius: 20px;
+  border: 1.5px solid #e8e8ea; background: #fff;
+  font-size: 13px; font-weight: 600; color: var(--dark);
+  cursor: pointer; font-family: 'Noto Sans Vietnamese', sans-serif;
+  transition: all 0.15s;
+}
+.search-chip:hover { border-color: var(--red); color: var(--red); background: var(--light-red); }
+
 /* ── ADMIN ── */
 .adm-login-page {
   min-height: 100vh;
