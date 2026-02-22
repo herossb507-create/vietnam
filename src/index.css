@@ -1617,3 +1617,406 @@ header {
   color: #2e7d32;
   font-weight: 700;
 }
+
+/* ── SAFE WORKER (권익보호) ── */
+.sw-section {
+  padding: 0 20px 16px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.sw-section:first-of-type { padding-top: 20px; }
+.sw-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+.sw-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.sw-card-icon { font-size: 28px; flex-shrink: 0; }
+.sw-card-title {
+  font-family: 'Baloo 2', cursive;
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--dark);
+}
+.sw-card-sub { font-size: 12px; color: #888; margin-top: 2px; }
+
+/* Wage check form */
+.sw-form { margin-bottom: 12px; }
+.sw-field { margin-bottom: 10px; }
+
+/* Wage result */
+.sw-wage-result {
+  border-radius: 14px;
+  padding: 16px;
+  margin-top: 12px;
+}
+.sw-wage-result.theft {
+  background: linear-gradient(135deg, #fff5f5, #ffebee);
+  border: 2px solid #ffcdd2;
+}
+.sw-wage-result.ok {
+  background: #e8f5e9;
+  border: 2px solid #c8e6c9;
+}
+.sw-wage-alert {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+.sw-wage-alert-icon { font-size: 28px; flex-shrink: 0; }
+.sw-wage-alert-title {
+  font-family: 'Baloo 2', cursive;
+  font-weight: 800;
+  font-size: 16px;
+  color: #c62828;
+}
+.sw-wage-alert-amount {
+  font-size: 13px;
+  color: #c62828;
+  margin-top: 2px;
+}
+
+/* Remedy steps */
+.sw-steps { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+.sw-step {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.sw-step-num {
+  width: 28px; height: 28px;
+  background: #c62828;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff;
+  font-family: 'Baloo 2', cursive;
+  font-weight: 800;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.sw-step-title {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--dark);
+}
+.sw-step-desc {
+  font-size: 12px;
+  color: #666;
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
+/* Hotline CTA */
+.sw-hotline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #1b5e20, #2e7d32);
+  border-radius: 14px;
+  padding: 14px 16px;
+  text-decoration: none;
+  transition: transform 0.2s;
+}
+.sw-hotline:hover { transform: scale(1.01); }
+.sw-hotline-icon { font-size: 24px; }
+.sw-hotline-number {
+  font-family: 'Baloo 2', cursive;
+  font-weight: 800;
+  font-size: 22px;
+  color: #fff;
+}
+.sw-hotline-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.9);
+}
+.sw-hotline-desc {
+  font-size: 11px;
+  color: rgba(255,255,255,0.6);
+}
+
+/* Wage OK */
+.sw-wage-ok {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.sw-wage-ok span:first-child { font-size: 28px; }
+.sw-wage-ok-title {
+  font-weight: 700;
+  font-size: 14px;
+  color: #2e7d32;
+}
+.sw-wage-ok-diff { font-size: 12px; color: #666; }
+
+/* Clock in/out buttons */
+.sw-clock-btns {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.sw-clock-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+  border: none;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: 'Baloo 2', cursive;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+.sw-clock-btn.in {
+  background: linear-gradient(135deg, #2e7d32, #43a047);
+  color: #fff;
+}
+.sw-clock-btn.out {
+  background: linear-gradient(135deg, #c62828, #e53935);
+  color: #fff;
+}
+.sw-clock-btn:hover { transform: translateY(-2px); }
+.sw-clock-icon { font-size: 18px; }
+
+.sw-working-badge {
+  text-align: center;
+  padding: 6px 12px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  animation: pulse 2s ease infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* Month selector */
+.sw-month-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.sw-month-row .clc-label { margin-bottom: 0; white-space: nowrap; }
+
+/* Stats */
+.sw-stats {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+}
+.sw-stat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 13px;
+  color: #555;
+}
+.sw-stat-row.total {
+  border-top: 1px solid #e0e0e0;
+  padding-top: 8px;
+  margin-top: 4px;
+}
+.sw-stat-row strong {
+  color: var(--dark);
+  font-weight: 700;
+}
+
+/* Work log table */
+.sw-log-table-wrap { overflow-x: auto; margin-bottom: 10px; }
+.sw-log-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.sw-log-table th {
+  text-align: left;
+  font-size: 10px;
+  font-weight: 700;
+  color: #888;
+  text-transform: uppercase;
+  padding: 6px 8px;
+  border-bottom: 2px solid #f0f0f0;
+}
+.sw-log-table td {
+  padding: 8px;
+  border-bottom: 1px solid #f6f6f6;
+  vertical-align: middle;
+}
+.sw-log-badge {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 6px;
+  margin-left: 4px;
+}
+.sw-log-badge.overtime { background: #fff3e0; color: #e65100; }
+.sw-log-badge.night { background: #e8eaf6; color: #283593; }
+.sw-log-badge.weekend { background: #fce4ec; color: #c62828; }
+
+.sw-csv-btn {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'Baloo 2', cursive;
+  color: var(--dark);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.sw-csv-btn:hover { border-color: var(--blue); color: var(--blue); }
+
+.sw-empty {
+  text-align: center;
+  color: #aaa;
+  font-size: 13px;
+  padding: 16px 0;
+}
+
+/* ── AI Chat ── */
+.sw-faq-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.sw-faq-btn {
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1.5px solid #e0e0e0;
+  background: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--dark);
+  cursor: pointer;
+  font-family: 'Noto Sans Vietnamese', sans-serif;
+  transition: all 0.15s;
+}
+.sw-faq-btn:hover {
+  border-color: #2e7d32;
+  color: #2e7d32;
+  background: #e8f5e9;
+}
+
+.sw-chat-area {
+  background: #f8f9fa;
+  border-radius: 14px;
+  padding: 14px;
+  min-height: 200px;
+  max-height: 360px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.sw-chat-empty {
+  text-align: center;
+  font-size: 40px;
+  opacity: 0.3;
+  margin: auto;
+}
+
+/* Chat bubbles */
+.sw-chat-bubble {
+  max-width: 85%;
+  display: flex;
+}
+.sw-chat-bubble.user {
+  align-self: flex-end;
+}
+.sw-chat-bubble.assistant {
+  align-self: flex-start;
+}
+.sw-chat-bubble-content {
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-size: 13px;
+  line-height: 1.6;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+.sw-chat-bubble.user .sw-chat-bubble-content {
+  background: linear-gradient(135deg, #2e7d32, #43a047);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+.sw-chat-bubble.assistant .sw-chat-bubble-content {
+  background: #fff;
+  color: var(--dark);
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+/* Thinking animation */
+.sw-thinking {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  padding: 12px 16px;
+}
+.sw-dot {
+  width: 8px; height: 8px;
+  background: #aaa;
+  border-radius: 50%;
+  animation: dotBounce 1.4s ease-in-out infinite;
+}
+.sw-dot:nth-child(2) { animation-delay: 0.2s; }
+.sw-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dotBounce {
+  0%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-6px); }
+}
+
+/* Chat input */
+.sw-chat-input-wrap {
+  display: flex;
+  gap: 8px;
+}
+.sw-chat-input {
+  flex: 1;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-family: 'Noto Sans Vietnamese', sans-serif;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.sw-chat-input:focus { border-color: #2e7d32; }
+.sw-chat-send {
+  padding: 10px 18px;
+  background: linear-gradient(135deg, #2e7d32, #43a047);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: 'Baloo 2', cursive;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.sw-chat-send:hover:not(:disabled) { transform: translateY(-1px); }
+.sw-chat-send:disabled { opacity: 0.5; cursor: not-allowed; }

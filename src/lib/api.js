@@ -225,6 +225,54 @@ export async function deleteSavingsGoal(id) {
   if (error) throw error
 }
 
+// ── Work Logs (출퇴근 기록) ──────────────────────────────────────
+
+export async function fetchWorkLogs(userId, yearMonth) {
+  // yearMonth: 'YYYY-MM' 형태
+  const start = `${yearMonth}-01T00:00:00`
+  const endDate = new Date(+yearMonth.split('-')[0], +yearMonth.split('-')[1], 0)
+  const end = `${yearMonth}-${String(endDate.getDate()).padStart(2, '0')}T23:59:59`
+
+  const { data, error } = await supabase
+    .from('work_logs')
+    .select('*')
+    .eq('user_id', userId)
+    .gte('clock_in', start)
+    .lte('clock_in', end)
+    .order('clock_in', { ascending: false })
+  if (error) throw error
+  return data
+}
+
+export async function clockIn(userId) {
+  const { data, error } = await supabase
+    .from('work_logs')
+    .insert([{ user_id: userId, clock_in: new Date().toISOString() }])
+    .select()
+    .single()
+  if (error) throw error
+  return data
+}
+
+export async function clockOut(logId) {
+  const { data, error } = await supabase
+    .from('work_logs')
+    .update({ clock_out: new Date().toISOString() })
+    .eq('id', logId)
+    .select()
+    .single()
+  if (error) throw error
+  return data
+}
+
+export async function deleteWorkLog(id) {
+  const { error } = await supabase
+    .from('work_logs')
+    .delete()
+    .eq('id', id)
+  if (error) throw error
+}
+
 // ── Search ───────────────────────────────────────────────────────
 // FTS(supabase/search-indexes.sql) 인덱스가 없으면 자동으로 ilike 방식으로 fallback
 

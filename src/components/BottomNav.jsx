@@ -11,6 +11,7 @@ function BottomNav() {
     { path: '/guide',     icon: '📋', label: t('nav.guide') },
     { path: '/life',      icon: '🏙️', label: t('nav.life') },
     { path: '/community', icon: '💬', label: t('nav.community') },
+    { path: '/worker',    icon: '🛡️', label: t('nav.worker') },
   ]
 
   return (

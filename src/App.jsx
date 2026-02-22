@@ -11,6 +11,7 @@ import Guide from './pages/Guide'
 import Life from './pages/Life'
 import Community from './pages/Community'
 import Admin from './pages/Admin'
+import SafeWorker from './pages/SafeWorker'
 import './App.css'
 import { useEffect } from 'react'
 
@@ -40,6 +41,7 @@ function App() {
             <Route path="/guide"     element={<Guide     openModal={setModal} />} />
             <Route path="/life"      element={<Life      openModal={setModal} />} />
             <Route path="/community" element={<Community openModal={setModal} openAuthModal={openAuthModal} />} />
+            <Route path="/worker"    element={<SafeWorker />} />
             <Route path="/admin"     element={<Admin />} />
           </Routes>
         </main>
