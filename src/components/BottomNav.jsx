@@ -1,15 +1,17 @@
 import { useNavigate, useLocation } from 'react-router-dom'
-
-const NAV_ITEMS = [
-  { path: '/',          icon: '🏠', label: 'Trang chủ' },
-  { path: '/guide',     icon: '📋', label: 'Visa/EPS'  },
-  { path: '/life',      icon: '🏙️', label: 'Cuộc sống' },
-  { path: '/community', icon: '💬', label: 'Cộng đồng' },
-]
+import { useTranslation } from 'react-i18next'
 
 function BottomNav() {
+  const { t } = useTranslation()
   const navigate  = useNavigate()
   const { pathname } = useLocation()
+
+  const NAV_ITEMS = [
+    { path: '/',          icon: '🏠', label: t('nav.home') },
+    { path: '/guide',     icon: '📋', label: t('nav.guide') },
+    { path: '/life',      icon: '🏙️', label: t('nav.life') },
+    { path: '/community', icon: '💬', label: t('nav.community') },
+  ]
 
   return (
     <nav className="bottom-nav">

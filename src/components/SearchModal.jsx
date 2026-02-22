@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { searchGuides, searchReviews } from '../lib/api'
 import modals from '../data/modals'
 
@@ -7,6 +8,7 @@ const HINT_CHIPS = ['EPS-TOPIK', 'visa E-9', 'lương', 'bảo hiểm', 'tiếng
 const STAR_STR   = (n) => '★'.repeat(n) + '☆'.repeat(5 - n)
 
 export default function SearchModal({ onClose, openModal }) {
+  const { t } = useTranslation()
   const navigate  = useNavigate()
   const inputRef  = useRef(null)
 
@@ -14,7 +16,7 @@ export default function SearchModal({ onClose, openModal }) {
   const [guides,  setGuides]  = useState([])
   const [reviews, setReviews] = useState([])
   const [loading, setLoading] = useState(false)
-  const [touched, setTouched] = useState(false)   // 한 번이라도 검색했는지
+  const [touched, setTouched] = useState(false)
 
   // 모달 열리면 인풋 자동 포커스
   useEffect(() => { inputRef.current?.focus() }, [])
@@ -50,7 +52,6 @@ export default function SearchModal({ onClose, openModal }) {
   }, [query, doSearch])
 
   // ── 결과 클릭 핸들러 ──────────────────────────────────────────
-  // STEP 1-3: 가이드 → 해당 모달 열기 / 후기 → /community 이동
   const handleGuideClick = (guide) => {
     const modalData = modals[guide.modal_id]
     if (modalData) openModal(modalData)
@@ -81,7 +82,7 @@ export default function SearchModal({ onClose, openModal }) {
             ref={inputRef}
             className="search-bar-input"
             type="text"
-            placeholder="Tìm kiếm hướng dẫn, kinh nghiệm..."
+            placeholder={t('search.placeholder')}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
@@ -107,10 +108,10 @@ export default function SearchModal({ onClose, openModal }) {
             <div className="search-empty">
               <div className="search-empty-icon">🔍</div>
               <p className="search-empty-title">
-                Không tìm thấy kết quả
+                {t('search.noResultTitle')}
               </p>
               <p className="search-empty-sub">
-                cho &ldquo;<strong>{query}</strong>&rdquo; — thử từ khóa khác nhé!
+                {t('search.noResultSub', { query })}
               </p>
             </div>
           )}
@@ -123,7 +124,7 @@ export default function SearchModal({ onClose, openModal }) {
               {guides.length > 0 && (
                 <div className="search-section">
                   <div className="search-section-title">
-                    📋 Hướng dẫn EPS
+                    {t('search.guideSection')}
                     <span className="search-count">{guides.length}</span>
                   </div>
                   {guides.map((g) => (
@@ -145,7 +146,7 @@ export default function SearchModal({ onClose, openModal }) {
               {reviews.length > 0 && (
                 <div className="search-section">
                   <div className="search-section-title">
-                    💬 Kinh nghiệm
+                    {t('search.reviewSection')}
                     <span className="search-count">{reviews.length}</span>
                   </div>
                   {reviews.map((r) => (
@@ -172,7 +173,7 @@ export default function SearchModal({ onClose, openModal }) {
           {/* 초기 상태 – 힌트 칩 */}
           {!query && !touched && (
             <div className="search-hint">
-              <p className="search-hint-title">💡 Tìm kiếm phổ biến</p>
+              <p className="search-hint-title">{t('search.hintTitle')}</p>
               <div className="search-chips">
                 {HINT_CHIPS.map((chip) => (
                   <button key={chip} className="search-chip" onClick={() => setQuery(chip)}>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { signIn, signUp, signInWithGoogle } from '../lib/auth'
 import { useAuth } from '../context/AuthContext'
 
@@ -15,6 +16,7 @@ function GoogleIcon() {
 }
 
 export default function AuthModal({ onClose }) {
+  const { t } = useTranslation()
   const { user } = useAuth()
   const [mode,     setMode]     = useState('login')   // 'login' | 'signup'
   const [email,    setEmail]    = useState('')
@@ -32,7 +34,7 @@ export default function AuthModal({ onClose }) {
 
   const handleSubmit = async () => {
     if (!email.trim() || !password.trim()) {
-      setError('Vui lòng nhập email và mật khẩu.')
+      setError(t('auth.validationEmpty'))
       return
     }
     setLoading(true)
@@ -44,14 +46,13 @@ export default function AuthModal({ onClose }) {
           : await signUp(email, password)
       if (authErr) throw authErr
       if (mode === 'signup') setDone(true)
-      // 로그인 성공 → useEffect의 user 변화로 자동 닫힘
     } catch (e) {
       const msg = {
-        'Invalid login credentials':      'Email hoặc mật khẩu không đúng.',
-        'Email not confirmed':             'Email chưa được xác nhận. Kiểm tra hộp thư.',
-        'User already registered':         'Email này đã được đăng ký.',
-        'Password should be at least 6 characters': 'Mật khẩu tối thiểu 6 ký tự.',
-      }[e.message] ?? e.message ?? 'Đã xảy ra lỗi. Vui lòng thử lại.'
+        'Invalid login credentials':      t('auth.errInvalidLogin'),
+        'Email not confirmed':             t('auth.errNotConfirmed'),
+        'User already registered':         t('auth.errAlreadyRegistered'),
+        'Password should be at least 6 characters': t('auth.errPasswordShort'),
+      }[e.message] ?? e.message ?? t('auth.errGeneric')
       setError(msg)
     } finally {
       setLoading(false)
@@ -63,9 +64,8 @@ export default function AuthModal({ onClose }) {
     try {
       const { error: authErr } = await signInWithGoogle()
       if (authErr) throw authErr
-      // 리다이렉트되므로 이후 코드는 실행 안 됨
     } catch (e) {
-      setError(e.message ?? 'Không thể kết nối Google.')
+      setError(e.message ?? t('auth.errGoogleFail'))
     }
   }
 
@@ -82,33 +82,33 @@ export default function AuthModal({ onClose }) {
           /* ── 회원가입 완료 ── */
           <div className="success-box">
             <div className="s-icon">📧</div>
-            <div className="s-title">Kiểm tra email!</div>
+            <div className="s-title">{t('auth.signupDoneTitle')}</div>
             <div className="s-desc">
-              Chúng tôi đã gửi link xác nhận tới<br />
+              {t('auth.signupDoneDesc1')}<br />
               <strong>{email}</strong><br />
-              Nhấp vào link để kích hoạt tài khoản.
+              {t('auth.signupDoneDesc2')}
             </div>
           </div>
         ) : (
           <>
             {/* 로고 + 타이틀 */}
             <div className="auth-logo">🔐</div>
-            <div className="auth-headline">KoViet Guide</div>
-            <p className="auth-sub">Đăng nhập để chia sẻ kinh nghiệm</p>
+            <div className="auth-headline">{t('auth.headline')}</div>
+            <p className="auth-sub">{t('auth.sub')}</p>
 
             {/* 탭 */}
             <div className="auth-tabs">
               <button className={`auth-tab ${mode === 'login'  ? 'active' : ''}`} onClick={() => switchMode('login')}>
-                Đăng nhập
+                {t('auth.tabLogin')}
               </button>
               <button className={`auth-tab ${mode === 'signup' ? 'active' : ''}`} onClick={() => switchMode('signup')}>
-                Đăng ký
+                {t('auth.tabSignup')}
               </button>
             </div>
 
             {/* 이메일 */}
             <div className="form-group">
-              <label className="form-label">Email</label>
+              <label className="form-label">{t('auth.email')}</label>
               <input
                 className="form-input"
                 type="email"
@@ -122,11 +122,11 @@ export default function AuthModal({ onClose }) {
 
             {/* 비밀번호 */}
             <div className="form-group">
-              <label className="form-label">Mật khẩu</label>
+              <label className="form-label">{t('auth.password')}</label>
               <input
                 className="form-input"
                 type="password"
-                placeholder={mode === 'signup' ? 'Tối thiểu 6 ký tự' : '••••••••'}
+                placeholder={mode === 'signup' ? t('auth.passwordMinHint') : '••••••••'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 onKeyDown={onKey}
@@ -139,16 +139,16 @@ export default function AuthModal({ onClose }) {
 
             {/* 제출 */}
             <button className="submit-btn" onClick={handleSubmit} disabled={loading}>
-              {loading ? 'Đang xử lý...' : mode === 'login' ? 'Đăng nhập' : 'Tạo tài khoản'}
+              {loading ? t('auth.processing') : mode === 'login' ? t('auth.submit') : t('auth.submitSignup')}
             </button>
 
             {/* 구분선 */}
-            <div className="auth-divider"><span>hoặc</span></div>
+            <div className="auth-divider"><span>{t('auth.or')}</span></div>
 
             {/* 구글 로그인 */}
             <button className="google-btn" onClick={handleGoogle} disabled={loading}>
               <GoogleIcon />
-              Tiếp tục với Google
+              {t('auth.google')}
             </button>
           </>
         )}

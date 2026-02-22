@@ -922,6 +922,55 @@ header {
 }
 .search-chip:hover { border-color: var(--red); color: var(--red); background: var(--light-red); }
 
+/* ── LANGUAGE SWITCHER ── */
+.lang-wrap { position: relative; }
+
+.lang-btn {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.18);
+  border: 1.5px solid rgba(255,255,255,0.45);
+  color: #fff;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+  flex-shrink: 0;
+  font-size: 18px; line-height: 1;
+}
+.lang-btn:hover { background: rgba(255,255,255,0.30); }
+.lang-flag { display: block; }
+
+.lang-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 170px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.18);
+  z-index: 300;
+  overflow: hidden;
+  animation: fadeIn 0.15s ease;
+}
+
+.lang-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 11px 16px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: 'Noto Sans Vietnamese', sans-serif;
+  color: var(--dark);
+  transition: background 0.12s;
+}
+.lang-option:hover { background: #fafafa; }
+.lang-option.active { background: var(--light-red); color: var(--red); font-weight: 700; }
+.lang-option .lang-flag { font-size: 20px; }
+
 /* ── NOTIFICATION BELL ── */
 .noti-wrap { position: relative; }
 

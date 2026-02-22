@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { fetchReviews, saveReview } from '../lib/api'
 import { useAuth } from '../context/AuthContext'
 
@@ -37,6 +38,7 @@ const starsStr = (n) => STAR_FULL.repeat(n) + STAR_EMPTY.repeat(5 - n)
 
 // ── 후기 작성 폼 모달 ────────────────────────────────────────
 function WriteReviewModal({ onClose, onSaved }) {
+  const { t } = useTranslation()
   const EMPTY = { name: '', info: '', stars: 5, review_text: '', tags: '' }
   const [form,    setForm]    = useState(EMPTY)
   const [saving,  setSaving]  = useState(false)
@@ -47,18 +49,18 @@ function WriteReviewModal({ onClose, onSaved }) {
 
   const handleSubmit = async () => {
     if (!form.name.trim() || !form.review_text.trim()) {
-      setErr('Vui lòng điền Tên và Nội dung đánh giá.')
+      setErr(t('community.formValidation'))
       return
     }
     setSaving(true)
     setErr('')
     try {
-      const tags = form.tags.split(',').map((t) => t.trim()).filter(Boolean)
+      const tags = form.tags.split(',').map((tg) => tg.trim()).filter(Boolean)
       await saveReview({ ...form, tags })
       setSuccess(true)
       onSaved() // 목록 새로고침
     } catch {
-      setErr('Lỗi kết nối. Vui lòng thử lại sau.')
+      setErr(t('community.formError'))
     } finally {
       setSaving(false)
     }
@@ -75,28 +77,25 @@ function WriteReviewModal({ onClose, onSaved }) {
         {success ? (
           <div className="success-box">
             <div className="s-icon">🎉</div>
-            <div className="s-title">Cảm ơn bạn!</div>
-            <div className="s-desc">
-              Kinh nghiệm của bạn đã được chia sẻ.<br />
-              Sẽ giúp ích rất nhiều cho mọi người!
-            </div>
+            <div className="s-title">{t('community.successTitle')}</div>
+            <div className="s-desc">{t('community.successDesc')}</div>
           </div>
         ) : (
           <>
-            <div className="modal-title">✏️ Chia sẻ kinh nghiệm</div>
+            <div className="modal-title">{t('community.formTitle')}</div>
 
             <div className="form-group">
-              <label className="form-label">Họ và tên *</label>
-              <input className="form-input" placeholder="Nguyễn Văn A" value={form.name} onChange={set('name')} />
+              <label className="form-label">{t('community.formName')} *</label>
+              <input className="form-input" placeholder={t('community.formNamePlaceholder')} value={form.name} onChange={set('name')} />
             </div>
 
             <div className="form-group">
-              <label className="form-label">Công việc • Vùng • Thời gian</label>
-              <input className="form-input" placeholder="Nhà máy • Gyeonggi-do • 2 năm" value={form.info} onChange={set('info')} />
+              <label className="form-label">{t('community.formInfo')}</label>
+              <input className="form-input" placeholder={t('community.formInfoPlaceholder')} value={form.info} onChange={set('info')} />
             </div>
 
             <div className="form-group">
-              <label className="form-label">Đánh giá sao</label>
+              <label className="form-label">{t('community.formStars')}</label>
               <div className="star-row">
                 {[1, 2, 3, 4, 5].map((n) => (
                   <button
@@ -109,25 +108,25 @@ function WriteReviewModal({ onClose, onSaved }) {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Nội dung đánh giá *</label>
+              <label className="form-label">{t('community.formReview')} *</label>
               <textarea
                 className="form-textarea"
-                placeholder="Chia sẻ kinh nghiệm, lương, môi trường làm việc..."
+                placeholder={t('community.formReviewPlaceholder')}
                 value={form.review_text}
                 onChange={set('review_text')}
               />
             </div>
 
             <div className="form-group">
-              <label className="form-label">Tags (cách nhau bằng dấu phẩy)</label>
-              <input className="form-input" placeholder="Chế tạo, E-9, Gyeonggi" value={form.tags} onChange={set('tags')} />
-              <p className="form-hint">Ví dụ: Nông nghiệp, E-9, Chungnam</p>
+              <label className="form-label">{t('community.formTags')}</label>
+              <input className="form-input" placeholder={t('community.formTagsPlaceholder')} value={form.tags} onChange={set('tags')} />
+              <p className="form-hint">{t('community.formTagsHint')}</p>
             </div>
 
             {err && <p style={{ color: 'var(--red)', fontSize: 13, marginBottom: 12 }}>{err}</p>}
 
             <button className="submit-btn" onClick={handleSubmit} disabled={saving}>
-              {saving ? 'Đang gửi...' : '🚀 Gửi đánh giá'}
+              {saving ? t('community.formSubmitting') : t('community.formSubmit')}
             </button>
           </>
         )}
@@ -138,6 +137,7 @@ function WriteReviewModal({ onClose, onSaved }) {
 
 // ── 메인 Community 페이지 ─────────────────────────────────────
 function Community({ openModal, openAuthModal }) {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { user } = useAuth()
   const [reviews,    setReviews]    = useState([])
@@ -145,24 +145,22 @@ function Community({ openModal, openAuthModal }) {
   const [refreshKey, setRefreshKey] = useState(0)
   const [showForm,   setShowForm]   = useState(false)
 
-  // refreshKey가 바뀔 때마다 재페치 (setState는 모두 async 콜백 안에서만 호출)
+  // refreshKey가 바뀔 때마다 재페치
   useEffect(() => {
     fetchReviews()
       .then((data) => { setReviews(data); setLoading(false) })
       .catch(() => { setReviews(REVIEWS_FALLBACK); setLoading(false) })
   }, [refreshKey])
 
-  // 후기 저장 성공 후 목록 새로고침 (setLoading은 이벤트 핸들러에서 호출 → OK)
   const handleSaved = () => {
     setShowForm(false)
     setLoading(true)
     setRefreshKey((k) => k + 1)
   }
 
-  // 클릭된 후기를 모달로 표시
   const handleReviewClick = (review) => {
     openModal({
-      title: `⭐ Kinh nghiệm của ${review.name}`,
+      title: t('community.experienceOf', { name: review.name }),
       body: `<strong>${review.name}</strong><br/>${review.info}<br/><br/>"${review.review_text}"`,
     })
   }
@@ -170,9 +168,9 @@ function Community({ openModal, openAuthModal }) {
   return (
     <div className="page-enter">
       <div className="screen-header" style={{ background: 'linear-gradient(135deg, #2d5a27, #4a8f3f)' }}>
-        <button className="back-btn" onClick={() => navigate('/')}>← Quay lại</button>
-        <h2>💬 Cộng đồng<br />người Việt tại HQ</h2>
-        <p>Kinh nghiệm thực tế từ anh chị đi trước</p>
+        <button className="back-btn" onClick={() => navigate('/')}>{t('common.back')}</button>
+        <h2>{t('community.title')}</h2>
+        <p>{t('community.subtitle')}</p>
       </div>
 
       <div className="review-list">
@@ -180,7 +178,7 @@ function Community({ openModal, openAuthModal }) {
         {loading && (
           <div className="loading-wrap">
             <div className="spinner" />
-            <p>Đang tải đánh giá...</p>
+            <p>{t('community.loadingText')}</p>
           </div>
         )}
 
@@ -209,22 +207,22 @@ function Community({ openModal, openAuthModal }) {
         {/* 빈 상태 */}
         {!loading && reviews.length === 0 && (
           <div className="error-wrap">
-            Chưa có đánh giá nào.<br />Hãy là người đầu tiên chia sẻ! 🙏
+            {t('community.emptyState')}
           </div>
         )}
 
         <div style={{ textAlign: 'center', padding: '8px 0 4px' }}>
           {user ? (
             <button className="write-btn" onClick={() => setShowForm(true)}>
-              ✏️ Chia sẻ kinh nghiệm của bạn
+              {t('community.writeBtn')}
             </button>
           ) : (
             <div>
               <button className="write-btn" onClick={openAuthModal}>
-                ✏️ Chia sẻ kinh nghiệm của bạn
+                {t('community.writeBtn')}
               </button>
               <p style={{ fontSize: 12, color: '#aaa', marginTop: 6 }}>
-                Đăng nhập để viết đánh giá
+                {t('community.loginToWrite')}
               </p>
             </div>
           )}

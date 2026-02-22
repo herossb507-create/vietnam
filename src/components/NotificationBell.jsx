@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
 import {
@@ -8,30 +9,31 @@ import {
   markAllNotificationsRead,
 } from '../lib/api'
 
-const TYPE_LABELS = {
-  new_review: { icon: '💬', label: 'Đánh giá mới' },
-  notice:     { icon: '📢', label: 'Thông báo' },
-  visa_info:  { icon: '🛂', label: 'Thông tin visa' },
-}
-
-function timeAgo(dateStr) {
+function formatTimeAgo(dateStr, t) {
   const diff = Date.now() - new Date(dateStr).getTime()
   const mins = Math.floor(diff / 60000)
-  if (mins < 1) return 'Vừa xong'
-  if (mins < 60) return `${mins} phút trước`
+  if (mins < 1) return t('notification.justNow')
+  if (mins < 60) return t('notification.minutesAgo', { n: mins })
   const hrs = Math.floor(mins / 60)
-  if (hrs < 24) return `${hrs} giờ trước`
+  if (hrs < 24) return t('notification.hoursAgo', { n: hrs })
   const days = Math.floor(hrs / 24)
-  return `${days} ngày trước`
+  return t('notification.daysAgo', { n: days })
 }
 
 function NotificationBell() {
+  const { t } = useTranslation()
   const { user } = useAuth()
   const [open, setOpen] = useState(false)
   const [items, setItems] = useState([])
   const [unread, setUnread] = useState(0)
   const [loading, setLoading] = useState(false)
   const panelRef = useRef(null)
+
+  const TYPE_LABELS = {
+    new_review: { icon: '💬', label: t('notification.typeReview') },
+    notice:     { icon: '📢', label: t('notification.typeNotice') },
+    visa_info:  { icon: '🛂', label: t('notification.typeVisa') },
+  }
 
   // ── 읽지 않은 개수 가져오기 ──
   const loadUnread = useCallback(() => {
@@ -68,7 +70,6 @@ function NotificationBell() {
           filter: `user_id=eq.${user.id}`,
         },
         (payload) => {
-          // 새 알림이 들어오면 unread 증가 + 목록 앞에 추가
           setUnread((prev) => prev + 1)
           setItems((prev) => [payload.new, ...prev].slice(0, 30))
         },
@@ -125,10 +126,10 @@ function NotificationBell() {
       {open && (
         <div className="noti-dropdown">
           <div className="noti-dropdown-header">
-            <span className="noti-dropdown-title">Thông báo</span>
+            <span className="noti-dropdown-title">{t('notification.title')}</span>
             {unread > 0 && (
               <button className="noti-read-all-btn" onClick={handleReadAll}>
-                Đánh dấu tất cả đã đọc
+                {t('notification.markAllRead')}
               </button>
             )}
           </div>
@@ -143,7 +144,7 @@ function NotificationBell() {
             {!loading && items.length === 0 && (
               <div className="noti-empty">
                 <div style={{ fontSize: 32, marginBottom: 8 }}>🔔</div>
-                <p>Chưa có thông báo</p>
+                <p>{t('notification.empty')}</p>
               </div>
             )}
 
@@ -159,7 +160,7 @@ function NotificationBell() {
                   <div className="noti-item-body">
                     <span className="noti-item-type">{meta.label}</span>
                     <span className="noti-item-msg">{n.message}</span>
-                    <span className="noti-item-time">{timeAgo(n.created_at)}</span>
+                    <span className="noti-item-time">{formatTimeAgo(n.created_at, t)}</span>
                   </div>
                   {!n.is_read && <span className="noti-dot" />}
                 </button>

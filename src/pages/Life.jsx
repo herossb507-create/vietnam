@@ -1,15 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import modals from '../data/modals'
-
-const LIFE_CARDS = [
-  { icon: '🏘️', title: 'Tìm nhà ở',        desc: 'Ký túc xá, 고시원, nhà thuê — ưu nhược điểm từng loại', modalId: 'modal-house',    colorClass: ''      },
-  { icon: '🏥', title: 'Y tế & Bệnh viện',  desc: 'Bệnh viện có phiên dịch tiếng Việt, số khẩn cấp',       modalId: 'modal-hospital', colorClass: 'blue'  },
-  { icon: '🏦', title: 'Mở tài khoản',      desc: 'Ngân hàng nào dễ mở? Cần giấy tờ gì?',                 modalId: 'modal-bank',     colorClass: 'gold'  },
-  { icon: '⚖️', title: 'Quyền lao động',    desc: 'Tăng ca, nghỉ phép, bị sa thải — quyền của bạn',        modalId: 'modal-rights',   colorClass: 'green' },
-  { icon: '🍜', title: 'Ẩm thực Việt',      desc: 'Nhà hàng Việt, siêu thị bán đồ Việt gần bạn',           modalId: 'modal-food',     colorClass: ''      },
-  { icon: '💸', title: 'Gửi tiền về nhà',   desc: 'So sánh phí chuyển tiền Western Union, KEB, Shinhan',   modalId: 'modal-remit',    colorClass: 'blue'  },
-]
 
 // ── 상수 ────────────────────────────────────────────────────────────
 const WEEKS_PER_MONTH    = 4.345
@@ -59,27 +51,22 @@ function calcMonthlyIncomeTax(totalGross) {
 function buildResult(baseSalary, weeklyHours, nightWork, weekendHrsPerWeek) {
   const hourlyRate = baseSalary / STANDARD_MON_HOURS
 
-  // 연장근로수당: 주 40h 초과분 × 1.5배
   const overtimeMonthly = Math.max(0, weeklyHours - 40) * WEEKS_PER_MONTH
   const overtimePay     = Math.round(overtimeMonthly * hourlyRate * 1.5)
 
-  // 야간근로수당: 전체 근무시간에 0.5배 추가 (야간 프리미엄)
   const nightPay = nightWork
     ? Math.round(weeklyHours * WEEKS_PER_MONTH * hourlyRate * 0.5)
     : 0
 
-  // 주말근로수당: 1.5배
   const weekendPay = Math.round(weekendHrsPerWeek * WEEKS_PER_MONTH * hourlyRate * 1.5)
 
   const totalGross = baseSalary + overtimePay + nightPay + weekendPay
 
-  // 4대보험
   const pension  = Math.round(Math.min(totalGross, PENSION_CEILING) * PENSION_RATE)
   const health   = Math.round(totalGross * HEALTH_RATE)
   const ltcare   = Math.round(health * LTCARE_RATE)
   const employ   = Math.round(totalGross * EMPLOY_RATE)
 
-  // 소득세 + 지방소득세
   const incomeTax = calcMonthlyIncomeTax(totalGross)
   const localTax  = Math.round(incomeTax * 0.1)
 
@@ -99,6 +86,7 @@ const VND = (n) => n.toLocaleString('vi-VN') + ' ₫'
 
 // ── Life 페이지 ────────────────────────────────────────────────────
 function Life({ openModal }) {
+  const { t } = useTranslation()
   const navigate = useNavigate()
 
   // 입력 상태
@@ -112,6 +100,15 @@ function Life({ openModal }) {
   const [vndRate,      setVndRate]      = useState(null)
   const [rateLoading,  setRateLoading]  = useState(true)
   const [rateDate,     setRateDate]     = useState('')
+
+  const LIFE_CARDS = [
+    { icon: '🏘️', title: t('life.cardHouse'),    desc: t('life.cardHouseDesc'),    modalId: 'modal-house',    colorClass: ''      },
+    { icon: '🏥', title: t('life.cardHospital'), desc: t('life.cardHospitalDesc'), modalId: 'modal-hospital', colorClass: 'blue'  },
+    { icon: '🏦', title: t('life.cardBank'),     desc: t('life.cardBankDesc'),     modalId: 'modal-bank',     colorClass: 'gold'  },
+    { icon: '⚖️', title: t('life.cardRights'),   desc: t('life.cardRightsDesc'),   modalId: 'modal-rights',   colorClass: 'green' },
+    { icon: '🍜', title: t('life.cardFood'),     desc: t('life.cardFoodDesc'),     modalId: 'modal-food',     colorClass: ''      },
+    { icon: '💸', title: t('life.cardRemit'),    desc: t('life.cardRemitDesc'),    modalId: 'modal-remit',    colorClass: 'blue'  },
+  ]
 
   // 환율 자동 로드
   useEffect(() => {
@@ -136,19 +133,19 @@ function Life({ openModal }) {
   return (
     <div className="page-enter">
       <div className="screen-header" style={{ background: 'linear-gradient(135deg, #003478, #0052a5)' }}>
-        <button className="back-btn" onClick={() => navigate('/')}>← Quay lại</button>
-        <h2>🏠 Cuộc sống tại<br />Hàn Quốc</h2>
-        <p>Thông tin thiết yếu khi sống và làm việc ở Hàn</p>
+        <button className="back-btn" onClick={() => navigate('/')}>{t('common.back')}</button>
+        <h2>{t('life.title')}</h2>
+        <p>{t('life.subtitle')}</p>
       </div>
 
       {/* ── 월급 계산기 ── */}
       <div className="calc-wrap">
         <div className="calc-box">
-          <div className="calc-title">💰 Tính lương chi tiết</div>
+          <div className="calc-title">{t('life.calcTitle')}</div>
 
           {/* 기본급 */}
           <div className="clc-field">
-            <label className="clc-label">Lương cơ bản (₩/tháng)</label>
+            <label className="clc-label">{t('life.baseSalary')}</label>
             <div className="calc-input-wrap" style={{ marginBottom: 0 }}>
               <input
                 className="calc-input"
@@ -165,7 +162,7 @@ function Life({ openModal }) {
           {/* 주당 근무시간 + 야간근무 */}
           <div className="clc-row2">
             <div className="clc-field">
-              <label className="clc-label">Giờ làm / tuần</label>
+              <label className="clc-label">{t('life.weeklyHours')}</label>
               <div className="calc-input-wrap" style={{ marginBottom: 0 }}>
                 <input
                   className="calc-input"
@@ -179,7 +176,7 @@ function Life({ openModal }) {
             </div>
 
             <div className="clc-field">
-              <label className="clc-label">Ca đêm (22~06h)</label>
+              <label className="clc-label">{t('life.nightShift')}</label>
               <label className="clc-toggle">
                 <input
                   type="checkbox"
@@ -189,14 +186,14 @@ function Life({ openModal }) {
                 <span className="clc-toggle-track">
                   <span className="clc-toggle-thumb" />
                 </span>
-                <span className="clc-toggle-label">{nightWork ? 'Có' : 'Không'}</span>
+                <span className="clc-toggle-label">{nightWork ? t('common.yes') : t('common.no')}</span>
               </label>
             </div>
           </div>
 
           {/* 주말근무 */}
           <div className="clc-field">
-            <label className="clc-label">Giờ làm cuối tuần / tuần</label>
+            <label className="clc-label">{t('life.weekendHours')}</label>
             <div className="calc-input-wrap" style={{ marginBottom: 0 }}>
               <input
                 className="calc-input"
@@ -211,7 +208,7 @@ function Life({ openModal }) {
           </div>
 
           <button className="calc-btn" style={{ marginTop: 16 }} onClick={handleCalc}>
-            🧮 Tính lương
+            {t('life.calculate')}
           </button>
 
           {/* ── 결과 ── */}
@@ -220,82 +217,82 @@ function Life({ openModal }) {
 
               {/* 총급여 */}
               <div className="clc-section">
-                <div className="clc-section-title">📋 Tổng thu nhập</div>
+                <div className="clc-section-title">{t('life.grossTitle')}</div>
                 <div className="result-row">
-                  <span className="rl">Lương cơ bản</span>
+                  <span className="rl">{t('life.basePay')}</span>
                   <span className="rv">+ {W(result.baseSalary)}</span>
                 </div>
                 {result.overtimePay > 0 && (
                   <div className="result-row">
-                    <span className="rl">Tăng ca (×1.5)</span>
+                    <span className="rl">{t('life.overtime')}</span>
                     <span className="rv">+ {W(result.overtimePay)}</span>
                   </div>
                 )}
                 {result.nightPay > 0 && (
                   <div className="result-row">
-                    <span className="rl">Phụ cấp ca đêm (×0.5)</span>
+                    <span className="rl">{t('life.nightPay')}</span>
                     <span className="rv">+ {W(result.nightPay)}</span>
                   </div>
                 )}
                 {result.weekendPay > 0 && (
                   <div className="result-row">
-                    <span className="rl">Làm cuối tuần (×1.5)</span>
+                    <span className="rl">{t('life.weekendPay')}</span>
                     <span className="rv">+ {W(result.weekendPay)}</span>
                   </div>
                 )}
                 <div className="result-row clc-subtotal">
-                  <span className="rl">Tổng gross</span>
+                  <span className="rl">{t('life.totalGross')}</span>
                   <span className="rv">{W(result.totalGross)}</span>
                 </div>
               </div>
 
               {/* 공제 내역 */}
               <div className="clc-section">
-                <div className="clc-section-title">📉 Khấu trừ bảo hiểm &amp; thuế</div>
+                <div className="clc-section-title">{t('life.deductionTitle')}</div>
                 <div className="result-row">
-                  <span className="rl">Lương hưu (4.5%)</span>
+                  <span className="rl">{t('life.pension')}</span>
                   <span className="rv rv-ded">- {W(result.pension)}</span>
                 </div>
                 <div className="result-row">
-                  <span className="rl">Bảo hiểm y tế (3.545%)</span>
+                  <span className="rl">{t('life.healthIns')}</span>
                   <span className="rv rv-ded">- {W(result.health)}</span>
                 </div>
                 <div className="result-row">
-                  <span className="rl">Bảo dưỡng dài hạn (0.459%)</span>
+                  <span className="rl">{t('life.ltcare')}</span>
                   <span className="rv rv-ded">- {W(result.ltcare)}</span>
                 </div>
                 <div className="result-row">
-                  <span className="rl">Bảo hiểm việc làm (0.9%)</span>
+                  <span className="rl">{t('life.employIns')}</span>
                   <span className="rv rv-ded">- {W(result.employ)}</span>
                 </div>
                 {result.incomeTax > 0 && (
                   <div className="result-row">
-                    <span className="rl">Thuế thu nhập</span>
+                    <span className="rl">{t('life.incomeTax')}</span>
                     <span className="rv rv-ded">- {W(result.incomeTax)}</span>
                   </div>
                 )}
                 {result.localTax > 0 && (
                   <div className="result-row">
-                    <span className="rl">Thuế địa phương (10%)</span>
+                    <span className="rl">{t('life.localTax')}</span>
                     <span className="rv rv-ded">- {W(result.localTax)}</span>
                   </div>
                 )}
                 <div className="result-row clc-subtotal">
-                  <span className="rl">Tổng khấu trừ</span>
+                  <span className="rl">{t('life.totalDeduction')}</span>
                   <span className="rv rv-ded">- {W(result.totalDeduction)}</span>
                 </div>
               </div>
 
               {/* 실수령액 */}
               <div className="clc-net-box">
-                <div className="clc-net-label">💵 Lương thực nhận</div>
+                <div className="clc-net-label">{t('life.netSalary')}</div>
                 <div className="clc-net-won">{W(result.netSalary)}</div>
 
                 {/* VND 환산 */}
                 {rateLoading ? (
                   <div className="clc-vnd-loading">
                     <div className="spinner" style={{ width: 18, height: 18, borderWidth: 2 }} />
-                    <span>Đang tải tỷ giá...</span>
+                    <span>{t('life.loadingRate')}</span>
                   </div>
                 ) : vndRate ? (
                   <div className="clc-vnd-wrap">
@@ -311,7 +308,7 @@ function Life({ openModal }) {
                   </div>
                 ) : (
                   <div className="clc-vnd-rate" style={{ marginTop: 8 }}>
-                    Không thể tải tỷ giá hối đoái
+                    {t('life.rateError')}
                   </div>
                 )}
               </div>
