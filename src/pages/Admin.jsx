@@ -4,6 +4,7 @@ import {
   fetchGuidesRaw, upsertGuide, deleteGuide,
   fetchAllReviews, updateReviewApproval, deleteReview,
   fetchSettings, upsertSetting,
+  sendNotifications, fetchAllUserIds,
 } from '../lib/api'
 
 // ── 관리자 설정 ──────────────────────────────────────────────────
@@ -276,6 +277,83 @@ function SettingsPanel() {
   )
 }
 
+// ── 공지 발송 탭 ────────────────────────────────────────────────
+function NoticePanel() {
+  const [message, setMessage] = useState('')
+  const [type, setType]       = useState('notice')
+  const [sending, setSending] = useState(false)
+  const [msg, setMsg]         = useState('')
+
+  const flash = (m) => { setMsg(m); setTimeout(() => setMsg(''), 4000) }
+
+  const handleSend = async () => {
+    const txt = message.trim()
+    if (!txt) { flash('Nhập nội dung thông báo'); return }
+    setSending(true)
+    try {
+      const userIds = await fetchAllUserIds()
+      if (userIds.length === 0) {
+        flash('Không tìm thấy người dùng. Hãy tạo hàm RPC get_all_user_ids trong Supabase.')
+        setSending(false)
+        return
+      }
+      await sendNotifications(userIds, txt, type)
+      flash(`Đã gửi thông báo đến ${userIds.length} người dùng!`)
+      setMessage('')
+    } catch {
+      flash('Lỗi gửi thông báo')
+    }
+    setSending(false)
+  }
+
+  return (
+    <div>
+      {msg && <div className="adm-msg">{msg}</div>}
+
+      <div className="adm-card">
+        <h3 className="adm-card-title">📢 Gửi thông báo đến tất cả người dùng</h3>
+
+        <div className="adm-field">
+          <label>Loại thông báo</label>
+          <select className="form-input" value={type} onChange={(e) => setType(e.target.value)}>
+            <option value="notice">📢 Thông báo chung</option>
+            <option value="visa_info">🛂 Thông tin visa</option>
+            <option value="new_review">💬 Đánh giá mới</option>
+          </select>
+        </div>
+
+        <div className="adm-field">
+          <label>Nội dung</label>
+          <textarea
+            className="form-textarea"
+            rows={4}
+            placeholder="Nhập nội dung thông báo gửi đến tất cả người dùng..."
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
+        </div>
+
+        <button className="adm-btn primary" onClick={handleSend} disabled={sending}>
+          {sending ? 'Đang gửi...' : '📤 Gửi thông báo'}
+        </button>
+      </div>
+
+      <div className="adm-card" style={{ background: '#fffbe6', borderLeft: '4px solid var(--gold)' }}>
+        <h3 className="adm-card-title" style={{ fontSize: 13 }}>💡 Hướng dẫn thiết lập</h3>
+        <p style={{ fontSize: 12, color: '#666', lineHeight: 1.7 }}>
+          Để gửi thông báo, cần tạo hàm RPC trong Supabase SQL Editor:<br />
+          <code style={{ fontSize: 11, background: '#f4f4f6', padding: '2px 6px', borderRadius: 4 }}>
+            CREATE OR REPLACE FUNCTION get_all_user_ids()
+            RETURNS TABLE(id uuid) AS $$
+            SELECT id FROM auth.users;
+            $$ LANGUAGE sql SECURITY DEFINER;
+          </code>
+        </p>
+      </div>
+    </div>
+  )
+}
+
 // ── Admin 페이지 (메인) ─────────────────────────────────────────
 function Admin() {
   const navigate = useNavigate()
@@ -337,6 +415,7 @@ function Admin() {
   const TABS = [
     ['guides',   '📋 Hướng dẫn'],
     ['reviews',  '💬 Đánh giá'],
+    ['notice',   '📢 Thông báo'],
     ['settings', '⚙️ Cài đặt'],
   ]
 
@@ -365,6 +444,7 @@ function Admin() {
       <div className="adm-content">
         {tab === 'guides'   && <GuidesPanel />}
         {tab === 'reviews'  && <ReviewsPanel />}
+        {tab === 'notice'   && <NoticePanel />}
         {tab === 'settings' && <SettingsPanel />}
       </div>
     </div>

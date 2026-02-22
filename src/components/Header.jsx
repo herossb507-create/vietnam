@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { signOut } from '../lib/auth'
+import NotificationBell from './NotificationBell'
 
 function Header({ onLoginClick, onSearchClick }) {
   const { user } = useAuth()
@@ -34,6 +35,7 @@ function Header({ onLoginClick, onSearchClick }) {
               <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
           </button>
+          <NotificationBell />
           {user ? (
             /* ── 로그인 상태: 아바타 + 드롭다운 ── */
             <div className="user-menu-wrap" ref={menuRef}>

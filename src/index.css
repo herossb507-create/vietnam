@@ -922,6 +922,155 @@ header {
 }
 .search-chip:hover { border-color: var(--red); color: var(--red); background: var(--light-red); }
 
+/* ── NOTIFICATION BELL ── */
+.noti-wrap { position: relative; }
+
+.noti-bell-btn {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.18);
+  border: 1.5px solid rgba(255,255,255,0.45);
+  color: #fff;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+  flex-shrink: 0;
+  position: relative;
+}
+.noti-bell-btn:hover { background: rgba(255,255,255,0.30); }
+.noti-bell-btn svg { display: block; }
+
+/* 읽지 않은 개수 뱃지 */
+.noti-badge {
+  position: absolute;
+  top: -4px; right: -4px;
+  min-width: 18px; height: 18px;
+  background: #ff3b30;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  font-family: 'Baloo 2', cursive;
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 4px;
+  box-shadow: 0 2px 6px rgba(255,59,48,0.4);
+  line-height: 1;
+}
+
+/* 드롭다운 패널 */
+.noti-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: -40px;
+  width: 320px;
+  max-height: 420px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.18);
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: fadeIn 0.15s ease;
+}
+@media (max-width: 400px) {
+  .noti-dropdown { width: calc(100vw - 32px); right: -60px; }
+}
+
+.noti-dropdown-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.noti-dropdown-title {
+  font-family: 'Baloo 2', cursive;
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--dark);
+}
+.noti-read-all-btn {
+  background: none; border: none;
+  font-size: 12px; font-weight: 600;
+  color: var(--red);
+  cursor: pointer;
+  font-family: 'Noto Sans Vietnamese', sans-serif;
+}
+.noti-read-all-btn:hover { text-decoration: underline; }
+
+.noti-dropdown-body {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 개별 알림 아이템 */
+.noti-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font-family: 'Noto Sans Vietnamese', sans-serif;
+  transition: background 0.15s;
+  border-bottom: 1px solid #f8f8f8;
+  position: relative;
+}
+.noti-item:hover { background: #fafafa; }
+.noti-item.unread { background: #fef5f5; }
+.noti-item.unread:hover { background: #fdeaea; }
+
+.noti-item-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+.noti-item-body { flex: 1; min-width: 0; }
+.noti-item-type {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--red);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 2px;
+}
+.noti-item-msg {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--dark);
+  line-height: 1.4;
+  margin-bottom: 3px;
+}
+.noti-item-time {
+  font-size: 11px;
+  color: #aaa;
+}
+
+/* 읽지 않은 알림 점 */
+.noti-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--red);
+  flex-shrink: 0;
+  margin-top: 8px;
+}
+
+/* 로딩 & 비어있음 */
+.noti-loading {
+  display: flex;
+  justify-content: center;
+  padding: 32px 0;
+}
+.noti-empty {
+  text-align: center;
+  padding: 32px 16px;
+  color: #aaa;
+  font-size: 13px;
+}
+
 /* ── ADMIN ── */
 .adm-login-page {
   min-height: 100vh;

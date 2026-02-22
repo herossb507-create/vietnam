@@ -129,6 +129,72 @@ export async function upsertSetting(key, value, label) {
   if (error) throw error
 }
 
+// ── Notifications ────────────────────────────────────────────────
+
+export async function fetchNotifications(userId) {
+  const { data, error } = await supabase
+    .from('notifications')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(30)
+  if (error) throw error
+  return data
+}
+
+export async function fetchUnreadCount(userId) {
+  const { count, error } = await supabase
+    .from('notifications')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', userId)
+    .eq('is_read', false)
+  if (error) return 0
+  return count ?? 0
+}
+
+export async function markNotificationRead(id) {
+  const { error } = await supabase
+    .from('notifications')
+    .update({ is_read: true })
+    .eq('id', id)
+  if (error) throw error
+}
+
+export async function markAllNotificationsRead(userId) {
+  const { error } = await supabase
+    .from('notifications')
+    .update({ is_read: true })
+    .eq('user_id', userId)
+    .eq('is_read', false)
+  if (error) throw error
+}
+
+/** 특정 유저 목록에게 알림 전송 */
+export async function sendNotifications(userIds, message, type) {
+  const rows = userIds.map((user_id) => ({
+    user_id,
+    message,
+    type,
+    is_read: false,
+  }))
+  const { error } = await supabase
+    .from('notifications')
+    .insert(rows)
+  if (error) throw error
+}
+
+/** 모든 유저 ID 조회 (admin용 — profiles 테이블 또는 RPC 필요) */
+export async function fetchAllUserIds() {
+  // profiles 테이블이 없을 경우 notifications에서 distinct user_id를 가져옴
+  // 가장 안정적인 방법: Supabase에 get_all_user_ids RPC 생성
+  // 대안: 기존 notifications + reviews에서 유저 추출
+  const { data, error } = await supabase.rpc('get_all_user_ids')
+  if (!error && data) return data.map((r) => r.id)
+
+  // RPC가 없으면 빈 배열 (관리자가 SQL 실행 후 동작)
+  return []
+}
+
 // ── Search ───────────────────────────────────────────────────────
 // FTS(supabase/search-indexes.sql) 인덱스가 없으면 자동으로 ilike 방식으로 fallback
 
