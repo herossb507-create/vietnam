@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useAuth } from '../context/AuthContext'
+import { fetchSavingsGoals, upsertSavingsGoal, deleteSavingsGoal } from '../lib/api'
 import modals from '../data/modals'
 
 // ── 상수 ────────────────────────────────────────────────────────────
@@ -84,10 +86,19 @@ function buildResult(baseSalary, weeklyHours, nightWork, weekendHrsPerWeek) {
 const W   = (n) => n.toLocaleString('ko-KR') + ' ₩'
 const VND = (n) => n.toLocaleString('vi-VN') + ' ₫'
 
+// ── 송금 환율 비교 데이터 (수동 업데이트) ──────────────────────
+const REMIT_SERVICES = [
+  { id: 'sentbe',  name: 'Sentbe',    logo: '🟣', rate: 18.95, fee: 5000  },
+  { id: 'gme',     name: 'GME',       logo: '🔵', rate: 18.88, fee: 3000  },
+  { id: 'hanpass', name: 'Hanpass',    logo: '🟢', rate: 18.92, fee: 4000  },
+  { id: 'hana',    name: 'Hana Bank',  logo: '🏦', rate: 18.75, fee: 8000  },
+]
+
 // ── Life 페이지 ────────────────────────────────────────────────────
 function Life({ openModal }) {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const { user } = useAuth()
 
   // 입력 상태
   const [baseSalary,       setBaseSalary]       = useState('')
@@ -100,6 +111,13 @@ function Life({ openModal }) {
   const [vndRate,      setVndRate]      = useState(null)
   const [rateLoading,  setRateLoading]  = useState(true)
   const [rateDate,     setRateDate]     = useState('')
+
+  // 저축 목표
+  const GOAL_EMPTY = { name: '', target_vnd: '', months: '', current_vnd: '0' }
+  const [goals,       setGoals]       = useState([])
+  const [goalForm,    setGoalForm]    = useState(GOAL_EMPTY)
+  const [editGoalId,  setEditGoalId]  = useState(null)
+  const [goalMsg,     setGoalMsg]     = useState('')
 
   const LIFE_CARDS = [
     { icon: '🏘️', title: t('life.cardHouse'),    desc: t('life.cardHouseDesc'),    modalId: 'modal-house',    colorClass: ''      },
@@ -129,6 +147,55 @@ function Life({ openModal }) {
     if (!base) return
     setResult(buildResult(base, wkHours, nightWork, wkEnd))
   }
+
+  // ── 저축 목표 로드 ──
+  const loadGoals = useCallback(() => {
+    if (!user) return
+    fetchSavingsGoals(user.id)
+      .then(setGoals)
+      .catch(() => {})
+  }, [user])
+
+  useEffect(() => { loadGoals() }, [loadGoals])
+
+  const goalFlash = (m) => { setGoalMsg(m); setTimeout(() => setGoalMsg(''), 3000) }
+  const setG = (k) => (e) => setGoalForm((f) => ({ ...f, [k]: e.target.value }))
+
+  const handleGoalSave = async () => {
+    const target = parseInt(String(goalForm.target_vnd).replace(/,/g, '')) || 0
+    const months = parseInt(goalForm.months) || 0
+    if (!goalForm.name.trim() || !target || !months) return
+    try {
+      const payload = {
+        user_id: user.id,
+        name: goalForm.name.trim(),
+        target_vnd: target,
+        months,
+        current_vnd: parseInt(String(goalForm.current_vnd).replace(/,/g, '')) || 0,
+      }
+      if (editGoalId) payload.id = editGoalId
+      await upsertSavingsGoal(payload)
+      setGoalForm(GOAL_EMPTY)
+      setEditGoalId(null)
+      goalFlash(t('life.savingsSaved'))
+      loadGoals()
+    } catch { goalFlash(t('life.savingsError')) }
+  }
+
+  const handleGoalEdit = (g) => {
+    setEditGoalId(g.id)
+    setGoalForm({ name: g.name, target_vnd: String(g.target_vnd), months: String(g.months), current_vnd: String(g.current_vnd) })
+  }
+
+  const handleGoalDelete = async (id) => {
+    if (!window.confirm(t('life.savingsConfirmDelete'))) return
+    try { await deleteSavingsGoal(id); goalFlash(t('life.savingsDeleted')); loadGoals() }
+    catch { goalFlash(t('life.savingsError')) }
+  }
+
+  // 송금 서비스 정렬 (환율 높은 순)
+  const sortedRemit = [...REMIT_SERVICES].sort((a, b) => b.rate - a.rate)
+  const bestId = sortedRemit[0]?.id
 
   return (
     <div className="page-enter">
@@ -315,6 +382,132 @@ function Life({ openModal }) {
 
             </div>
           )}
+        </div>
+      </div>
+
+      {/* ══════════════ 금융관리 섹션 ══════════════ */}
+      <div className="fin-section">
+        <div className="fin-section-title">{t('life.financeSection')}</div>
+
+        {/* ── 기능 2: 송금 환율 비교 ── */}
+        <div className="fin-card">
+          <div className="fin-card-header">
+            <span className="fin-card-icon">💸</span>
+            <div>
+              <div className="fin-card-title">{t('life.remitCompare')}</div>
+              <div className="fin-card-sub">{t('life.remitCompareDesc')}</div>
+            </div>
+          </div>
+
+          <div className="remit-list">
+            {sortedRemit.map((s) => {
+              const received = Math.round((1_000_000 - s.fee) * s.rate)
+              const isBest = s.id === bestId
+              return (
+                <div key={s.id} className={`remit-row ${isBest ? 'best' : ''}`}>
+                  <div className="remit-logo">{s.logo}</div>
+                  <div className="remit-info">
+                    <div className="remit-name">
+                      {s.name}
+                      {isBest && <span className="remit-best-badge">{t('life.remitBest')}</span>}
+                    </div>
+                    <div className="remit-meta">
+                      {t('life.remitFee')}: {s.fee.toLocaleString()} ₩ &nbsp;•&nbsp;
+                      {t('life.remitRate')}: {s.rate.toFixed(2)}
+                    </div>
+                  </div>
+                  <div className="remit-result">
+                    <div className="remit-vnd">{received.toLocaleString('vi-VN')} ₫</div>
+                    <div className="remit-label">{t('life.remitReceive')}</div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+          <div className="remit-footer">
+            <span>{t('life.remitSend')}</span>
+            <span className="remit-note">{t('life.remitUpdated')}</span>
+          </div>
+        </div>
+
+        {/* ── 기능 3: 저축 목표 관리 ── */}
+        <div className="fin-card">
+          <div className="fin-card-header">
+            <span className="fin-card-icon">🎯</span>
+            <div>
+              <div className="fin-card-title">{t('life.savingsTitle')}</div>
+              {!user && <div className="fin-card-sub">{t('life.savingsLoginHint')}</div>}
+            </div>
+          </div>
+
+          {goalMsg && <div className="fin-msg">{goalMsg}</div>}
+
+          {/* 목표 입력 폼 */}
+          {user && (
+            <div className="savings-form">
+              <div className="savings-form-row">
+                <input className="form-input" placeholder={t('life.savingsGoalNamePH')} value={goalForm.name} onChange={setG('name')} />
+              </div>
+              <div className="savings-form-row three">
+                <div>
+                  <label className="clc-label">{t('life.savingsTargetVND')}</label>
+                  <input className="form-input" type="number" placeholder="500,000,000" value={goalForm.target_vnd} onChange={setG('target_vnd')} />
+                </div>
+                <div>
+                  <label className="clc-label">{t('life.savingsMonths')}</label>
+                  <input className="form-input" type="number" placeholder="24" value={goalForm.months} onChange={setG('months')} />
+                </div>
+                <div>
+                  <label className="clc-label">{t('life.savingsCurrentVND')}</label>
+                  <input className="form-input" type="number" placeholder="0" value={goalForm.current_vnd} onChange={setG('current_vnd')} />
+                </div>
+              </div>
+              <button className="calc-btn" onClick={handleGoalSave}>
+                {editGoalId ? t('life.savingsUpdate') : t('life.savingsAdd')}
+              </button>
+            </div>
+          )}
+
+          {/* 목표 카드 목록 */}
+          {user && goals.length === 0 && (
+            <p className="savings-empty">{t('life.savingsEmpty')}</p>
+          )}
+
+          {user && goals.map((g) => {
+            const pct = Math.min(100, Math.round((g.current_vnd / g.target_vnd) * 100))
+            const remaining = g.target_vnd - g.current_vnd
+            const monthlyNeed = remaining > 0 ? Math.ceil(remaining / Math.max(1, g.months)) : 0
+            return (
+              <div key={g.id} className="savings-goal-card">
+                <div className="savings-goal-top">
+                  <div className="savings-goal-name">{g.name}</div>
+                  <div className="savings-goal-actions">
+                    <button className="adm-btn-sm" onClick={() => handleGoalEdit(g)}>✏️</button>
+                    <button className="adm-btn-sm danger" onClick={() => handleGoalDelete(g.id)}>🗑️</button>
+                  </div>
+                </div>
+                <div className="savings-bar-wrap">
+                  <div className="savings-bar">
+                    <div className="savings-bar-fill" style={{ width: `${pct}%` }} />
+                  </div>
+                  <span className="savings-pct">{pct}%</span>
+                </div>
+                <div className="savings-goal-nums">
+                  <span>{VND(g.current_vnd)} / {VND(g.target_vnd)}</span>
+                </div>
+                <div className="savings-goal-detail">
+                  {pct >= 100 ? (
+                    <span className="savings-achieved">{t('life.savingsAchieved')}</span>
+                  ) : (
+                    <>
+                      <span>{t('life.savingsMonthlyNeed')}: <strong>{VND(monthlyNeed)}</strong></span>
+                      <span>{t('life.savingsMonthsLeft', { n: g.months })}</span>
+                    </>
+                  )}
+                </div>
+              </div>
+            )
+          })}
         </div>
       </div>
 

@@ -1435,3 +1435,185 @@ header {
 .success-box .s-icon { font-size: 48px; margin-bottom: 12px; }
 .success-box .s-title { font-family: 'Baloo 2', cursive; font-weight: 800; font-size: 20px; color: var(--dark); margin-bottom: 8px; }
 .success-box .s-desc { font-size: 14px; color: #666; line-height: 1.6; }
+
+/* ── FINANCE SECTION ── */
+.fin-section {
+  padding: 0 20px 20px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.fin-section-title {
+  font-family: 'Baloo 2', cursive;
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--dark);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.fin-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
+}
+.fin-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.fin-card-icon { font-size: 28px; flex-shrink: 0; }
+.fin-card-title {
+  font-family: 'Baloo 2', cursive;
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--dark);
+}
+.fin-card-sub { font-size: 12px; color: #888; margin-top: 2px; }
+.fin-msg {
+  padding: 8px 12px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+/* Remittance comparison */
+.remit-list { display: flex; flex-direction: column; gap: 10px; }
+.remit-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: #f8f9fa;
+  border-radius: 14px;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+}
+.remit-row.best {
+  background: linear-gradient(135deg, #fef5f5, #fff0f0);
+  border-color: var(--red);
+}
+.remit-logo { font-size: 24px; flex-shrink: 0; }
+.remit-info { flex: 1; min-width: 0; }
+.remit-name {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--dark);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.remit-best-badge {
+  display: inline-block;
+  background: var(--red);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 1px 8px;
+  border-radius: 10px;
+}
+.remit-meta { font-size: 11px; color: #888; margin-top: 2px; }
+.remit-result { text-align: right; flex-shrink: 0; }
+.remit-vnd {
+  font-family: 'Baloo 2', cursive;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--dark);
+}
+.remit-label { font-size: 10px; color: #aaa; }
+.remit-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #f0f0f0;
+  font-size: 12px;
+  color: #888;
+}
+.remit-note { font-size: 10px; color: #bbb; }
+
+/* Savings goals */
+.savings-form { margin-bottom: 16px; }
+.savings-form-row { margin-bottom: 10px; }
+.savings-form-row.three {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+@media (max-width: 420px) {
+  .savings-form-row.three { grid-template-columns: 1fr; }
+}
+.savings-empty {
+  text-align: center;
+  color: #aaa;
+  font-size: 13px;
+  padding: 16px 0;
+}
+.savings-goal-card {
+  background: #f8f9fa;
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+}
+.savings-goal-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.savings-goal-name {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--dark);
+}
+.savings-goal-actions { display: flex; gap: 4px; }
+.savings-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.savings-bar {
+  flex: 1;
+  height: 10px;
+  background: #e8e8ea;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.savings-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--red), #ff6b6b);
+  border-radius: 5px;
+  transition: width 0.4s ease;
+}
+.savings-pct {
+  font-family: 'Baloo 2', cursive;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--dark);
+  min-width: 36px;
+  text-align: right;
+}
+.savings-goal-nums {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 4px;
+}
+.savings-goal-detail {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #666;
+}
+.savings-achieved {
+  color: #2e7d32;
+  font-weight: 700;
+}

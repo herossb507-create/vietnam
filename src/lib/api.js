@@ -195,6 +195,36 @@ export async function fetchAllUserIds() {
   return []
 }
 
+// ── Savings Goals ────────────────────────────────────────────────
+
+export async function fetchSavingsGoals(userId) {
+  const { data, error } = await supabase
+    .from('savings_goals')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+  if (error) throw error
+  return data
+}
+
+export async function upsertSavingsGoal(goal) {
+  const { data, error } = await supabase
+    .from('savings_goals')
+    .upsert([goal])
+    .select()
+    .single()
+  if (error) throw error
+  return data
+}
+
+export async function deleteSavingsGoal(id) {
+  const { error } = await supabase
+    .from('savings_goals')
+    .delete()
+    .eq('id', id)
+  if (error) throw error
+}
+
 // ── Search ───────────────────────────────────────────────────────
 // FTS(supabase/search-indexes.sql) 인덱스가 없으면 자동으로 ilike 방식으로 fallback
 
